@@ -3,7 +3,7 @@
 // checkout of the `fastvault` branch — never commit its output. Mirrors the
 // exact-match-or-fail convention used by fastvault-clients' own apply.mjs so a
 // silent no-op (upstream changed the text) fails loudly instead of shipping unbranded.
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 function fail(msg) {
   console.error(`::error::${msg}`);
@@ -35,5 +35,33 @@ replaceExact(
   `<color name="ic_launcher_background">#FF175DDC</color>`,
   `<color name="ic_launcher_background">#FF2BBE8B</color>`,
 );
+
+// Launcher foreground — rasterize the FastVault mark SVG into every adaptive-icon
+// density Android needs. Adaptive icon foreground layers use a 108dp canvas; these
+// are the standard Android density multipliers applied to that base size.
+import sharp from "sharp";
+
+const FOREGROUND_SIZES = {
+  mdpi: 108,
+  hdpi: 162,
+  xhdpi: 216,
+  xxhdpi: 324,
+  xxxhdpi: 432,
+};
+
+async function generateLauncherForeground() {
+  for (const [density, px] of Object.entries(FOREGROUND_SIZES)) {
+    const dir = `app/src/main/res/mipmap-${density}`;
+    const out = `${dir}/ic_launcher_foreground.png`;
+    mkdirSync(dir, { recursive: true });
+    await sharp("fastvault/app-icon.svg", { density: 300 })
+      .resize(px, px, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .png()
+      .toFile(out);
+    console.log(`${out}: generated (${px}x${px})`);
+  }
+}
+
+await generateLauncherForeground();
 
 console.log("FastVault Android overlay (text) applied.");
