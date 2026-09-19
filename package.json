@@ -1,0 +1,8 @@
+{
+  "name": "fastvault-android-tooling",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "sharp": "^0.33.0"
+  }
+}
