@@ -26,16 +26,6 @@ replaceExact(
   `<string name="app_name" translatable="false">FastVault Dev</string>`,
 );
 
-// Adaptive icon background color — reuse FastVault's established brand-500 shade
-// (the same hex used as the primary brand color across the browser extension and
-// desktop app's tw-theme.css brand-500 remap in fastvault-clients/fastvault/apply.mjs).
-// Note: the actual file contains the alpha channel prefix (#FF), so we preserve it.
-replaceExact(
-  "app/src/main/res/values/ic_launcher_background.xml",
-  `<color name="ic_launcher_background">#FF175DDC</color>`,
-  `<color name="ic_launcher_background">#FF2BBE8B</color>`,
-);
-
 // Launcher foreground — rasterize the FastVault mark SVG into every adaptive-icon
 // density Android needs. Adaptive icon foreground layers use a 108dp canvas; these
 // are the standard Android density multipliers applied to that base size.
